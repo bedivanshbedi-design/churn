@@ -82,6 +82,41 @@ if st.button("Retrain Model"):
 
     model = load_model()  # 👈 reload updated model
     st.success(f"✅ Model retrained! New Accuracy: {acc:.4f}")
+    
+    generate_drift_report()
+# =============================
+# 📂 UPLOAD CSV + AUTO RETRAIN
+# =============================
+st.subheader("📂 Upload New CSV Data")
+
+uploaded_file = st.file_uploader("Upload CSV file", type=["csv"])
+
+if uploaded_file is not None:
+    new_data = pd.read_csv(uploaded_file)
+
+    file_path = "data/raw/data.csv"
+
+    # Append new dataset
+    if os.path.exists(file_path):
+        new_data.to_csv(file_path, mode='a', header=False, index=False)
+    else:
+        new_data.to_csv(file_path, index=False)
+
+    st.success("✅ CSV uploaded & data appended!")
+
+    # 🔁 AUTO RETRAIN
+    with st.spinner("Auto retraining model..."):
+        model, acc = train_model()
+
+    model = load_model()
+
+    st.success(f"✅ Model retrained automatically! Accuracy: {acc:.4f}")
+
+    # 📊 AUTO MONITORING
+    with st.spinner("Updating monitoring report..."):
+        generate_drift_report()
+
+    st.success("📊 Monitoring report updated!")
 
 # =============================
 # 📊 MONITORING SECTION
