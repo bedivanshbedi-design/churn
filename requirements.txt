@@ -1,6 +1,6 @@
-streamlit
-pandas
-numpy
-scikit-learn
 evidently==0.4.19
+numpy==1.26.4
+pandas
+scikit-learn
+streamlit
 joblib
