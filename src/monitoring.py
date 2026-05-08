@@ -1,17 +1,20 @@
-# src/monitoring.py
-
 import pandas as pd
 from evidently.report import Report
 from evidently.metric_preset import DataDriftPreset
+import time
 
 def generate_drift_report():
-    ref = pd.read_csv("data/raw/data.csv")
+    df = pd.read_csv("data/raw/data.csv")
 
-    # Simulating current data (you can replace with new_data.csv later)
-    current = ref.copy()
-    current["age"] += 5  
+    split = int(0.7 * len(df))
+
+    reference = df.iloc[:split]
+    current = df.iloc[split:]
 
     report = Report(metrics=[DataDriftPreset()])
-    report.run(reference_data=ref, current_data=current)
+    report.run(reference_data=reference, current_data=current)
 
-    report.save_html("drift_report.html")
+    report_path = f"drift_report_{int(time.time())}.html"
+    report.save_html(report_path)
+
+    return report_path

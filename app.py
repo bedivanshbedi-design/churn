@@ -83,7 +83,7 @@ if st.button("Retrain Model"):
     model = load_model()  # 👈 reload updated model
     st.success(f"✅ Model retrained! New Accuracy: {acc:.4f}")
     
-    generate_drift_report()
+    report_path = generate_drift_report()
 # =============================
 # 📂 UPLOAD CSV + AUTO RETRAIN
 # =============================
@@ -110,6 +110,7 @@ if uploaded_file is not None:
             st.stop()
 
         combined_df = pd.concat([existing_df, new_data], ignore_index=True)
+        combined_df.to_csv(file_path, index=False)   # ✅ IMPORTANT
 
     else:
         combined_df = new_data
@@ -141,10 +142,17 @@ if st.button("Run Drift Monitoring"):
     st.success("✅ Drift report generated!")
 
 # Display report if exists
-if os.path.exists("drift_report.html"):
+report_files = sorted(
+    [f for f in os.listdir() if f.startswith("drift_report")],
+    reverse=True
+)
+
+if report_files:
+    latest_report = report_files[0]
+
     st.subheader("📈 Drift Report")
 
-    with open("drift_report.html", "r", encoding="utf-8") as f:
+    with open(latest_report, "r", encoding="utf-8") as f:
         html_content = f.read()
 
     st.components.v1.html(html_content, height=800, scrolling=True)
