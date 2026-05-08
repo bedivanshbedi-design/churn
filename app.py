@@ -5,8 +5,6 @@ import os
 from src.train import train_model   
 from src.monitoring import generate_drift_report
 
-export ADMIN_PIN=9876
-
 st.subheader("🔐 Admin Access")
 
 entered_pin = st.text_input("Enter Admin PIN", type="password")
@@ -57,7 +55,7 @@ if is_admin:
 
 else:
     st.warning("🔒 Only authorized users can upload & retrain")
-    
+
 st.set_page_config(page_title="Churn Prediction", layout="centered")
 
 st.title("📊 Customer Churn Prediction")
