@@ -5,24 +5,28 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 import joblib
 
-df = pd.read_csv("data/raw/data.csv")
+def train_model(data_path="data/raw/data.csv"):
 
-X= df.drop("churn", axis=1)
-y= df["churn"]
+    df = pd.read_csv("data/raw/data.csv")
 
-X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.2)
+    X= df.drop("churn", axis=1)
+    y= df["churn"]
 
-mlflow.set_experiment("churn-mlops")
+    X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.2)
 
-with mlflow.start_run():
-    model = RandomForestClassifier()
-    model.fit(X_train,y_train)
+    mlflow.set_experiment("churn-mlops")
 
-    acc = model.score(X_test, y_test)
+    with mlflow.start_run():
+        model = RandomForestClassifier()
+        model.fit(X_train,y_train)
 
-    mlflow.log_metric("accuracy", acc)
-    mlflow.sklearn.log_model(model, "model")
+        acc = model.score(X_test, y_test)
 
-joblib.dump(model,'model.pkl')
+        mlflow.log_metric("accuracy", acc)
+        mlflow.sklearn.log_model(model, "model")
 
-print("Model trained , accuracy:", acc)
+    joblib.dump(model,'model.pkl')
+
+    print("Model trained , accuracy:", acc)
+
+    return model, acc
