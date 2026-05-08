@@ -1,12 +1,11 @@
-import os
+from src.train import train_model
 
 def check_drift():
-    return True 
-
+    return True
 
 if check_drift():
     print("Drift detected -> Retraining..")
-    os.system("python src/train.py")
-
+    model, acc = train_model()
+    print("New accuracy:", acc)
 else:
     print("No drift")

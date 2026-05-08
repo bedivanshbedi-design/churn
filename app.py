@@ -3,6 +3,7 @@ import joblib
 import pandas as pd
 import os
 from src.train import train_model   
+from src.monitoring import generate_drift_report
 
 st.set_page_config(page_title="Churn Prediction", layout="centered")
 
@@ -81,3 +82,22 @@ if st.button("Retrain Model"):
 
     model = load_model()  # 👈 reload updated model
     st.success(f"✅ Model retrained! New Accuracy: {acc:.4f}")
+
+# =============================
+# 📊 MONITORING SECTION
+# =============================
+st.subheader("📊 Model Monitoring (Drift Detection)")
+
+if st.button("Run Drift Monitoring"):
+    with st.spinner("Generating drift report..."):
+        generate_drift_report()
+    st.success("✅ Drift report generated!")
+
+# Display report if exists
+if os.path.exists("drift_report.html"):
+    st.subheader("📈 Drift Report")
+
+    with open("drift_report.html", "r", encoding="utf-8") as f:
+        html_content = f.read()
+
+    st.components.v1.html(html_content, height=800, scrolling=True)
