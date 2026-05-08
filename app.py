@@ -2,7 +2,7 @@ import streamlit as st
 import joblib
 import pandas as pd
 import os
-from src.train import train_model   # 👈 import your retrain function
+from src.train import train_model   
 
 st.set_page_config(page_title="Churn Prediction", layout="centered")
 

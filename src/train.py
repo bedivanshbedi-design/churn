@@ -49,11 +49,3 @@ def train_model(data_path="data/raw/data.csv"):
     print("Model trained, accuracy:", acc)
 
     return model, acc
-        mlflow.log_metric("accuracy", acc)
-        mlflow.sklearn.log_model(model, "model")
-
-    joblib.dump(model,'model.pkl')
-
-    print("Model trained , accuracy:", acc)
-
-    return model, acc
