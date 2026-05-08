@@ -1,0 +1,12 @@
+stages:
+  data:
+    cmd: python src/data_pipeline.py
+    outs:
+      - data/raw/data.csv
+
+  train:
+    cmd: python src/train.py
+    deps:
+      - data/raw/data.csv
+    outs:
+      - model.pkl
