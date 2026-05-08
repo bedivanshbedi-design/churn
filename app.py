@@ -5,6 +5,59 @@ import os
 from src.train import train_model   
 from src.monitoring import generate_drift_report
 
+export ADMIN_PIN=9876
+
+st.subheader("🔐 Admin Access")
+
+entered_pin = st.text_input("Enter Admin PIN", type="password")
+is_admin = entered_pin == ADMIN_PIN
+
+if is_admin:
+
+    st.subheader("📂 Upload New CSV Data")
+
+    uploaded_file = st.file_uploader("Upload CSV file", type=["csv"])
+
+    if uploaded_file is not None:
+        try:
+            new_data = pd.read_csv(uploaded_file)
+        except:
+            new_data = pd.read_csv(uploaded_file, sep=';')
+
+        file_path = "data/raw/data.csv"
+
+        if os.path.exists(file_path):
+            existing_df = pd.read_csv(file_path)
+
+            if list(new_data.columns) != list(existing_df.columns):
+                st.error("❌ Column mismatch!")
+                st.stop()
+
+            combined_df = pd.concat([existing_df, new_data], ignore_index=True)
+            combined_df.to_csv(file_path, index=False)
+
+        else:
+            new_data.to_csv(file_path, index=False)
+
+        st.success("✅ CSV uploaded!")
+
+        # Retrain
+        with st.spinner("Retraining..."):
+            model, acc = train_model()
+
+        model = load_model()
+
+        st.success(f"✅ Model retrained! Accuracy: {acc:.4f}")
+
+        # Monitoring
+        with st.spinner("Updating monitoring..."):
+            generate_drift_report()
+
+        st.success("📊 Monitoring updated!")
+
+else:
+    st.warning("🔒 Only authorized users can upload & retrain")
+    
 st.set_page_config(page_title="Churn Prediction", layout="centered")
 
 st.title("📊 Customer Churn Prediction")
