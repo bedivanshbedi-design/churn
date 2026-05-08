@@ -2,5 +2,5 @@ streamlit
 pandas
 numpy
 scikit-learn
-evidently
+evidently==0.4.19
 joblib
