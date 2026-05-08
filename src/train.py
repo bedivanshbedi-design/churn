@@ -17,7 +17,11 @@ except:
 def train_model(data_path="data/raw/data.csv"):
 
     # Load data
-    df = pd.read_csv(data_path)
+    try:
+        df = pd.read_csv(data_path)
+    except Exception as e:
+        print("Error reading CSV:", e)
+        return None, 0
 
     X = df.drop("churn", axis=1)
     y = df["churn"]

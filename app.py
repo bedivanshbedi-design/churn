@@ -92,15 +92,27 @@ st.subheader("📂 Upload New CSV Data")
 uploaded_file = st.file_uploader("Upload CSV file", type=["csv"])
 
 if uploaded_file is not None:
-    new_data = pd.read_csv(uploaded_file)
+    try:
+        new_data = pd.read_csv(uploaded_file)
+    except:
+        new_data = pd.read_csv(uploaded_file, sep=';')
 
     file_path = "data/raw/data.csv"
 
     # Append new dataset
     if os.path.exists(file_path):
-        new_data.to_csv(file_path, mode='a', header=False, index=False)
+        existing_df = pd.read_csv(file_path)
+
+        if list(new_data.columns) != list(existing_df.columns):
+            st.error("❌ Column mismatch! Upload correct format.")
+            st.write("Expected:", list(existing_df.columns))
+            st.write("Got:", list(new_data.columns))
+            st.stop()
+
+        combined_df = pd.concat([existing_df, new_data], ignore_index=True)
+
     else:
-        new_data.to_csv(file_path, index=False)
+        combined_df = new_data
 
     st.success("✅ CSV uploaded & data appended!")
 
