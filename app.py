@@ -5,10 +5,24 @@ import os
 from src.train import train_model   
 from src.monitoring import generate_drift_report
 
+ADMIN_PIN = os.getenv("ADMIN_PIN")
+
 st.subheader("🔐 Admin Access")
 
+if not ADMIN_PIN:
+    st.error("⚠️ ADMIN_PIN not set in environment")
+    st.stop()
+
 entered_pin = st.text_input("Enter Admin PIN", type="password")
-is_admin = entered_pin == ADMIN_PIN
+
+is_admin = False
+
+if entered_pin:
+    if entered_pin == ADMIN_PIN:
+        is_admin = True
+        st.success("✅ Access Granted")
+    else:
+        st.error("❌ Incorrect PIN")
 
 if is_admin:
 
