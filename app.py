@@ -7,6 +7,12 @@ from src.monitoring import generate_drift_report
 
 ADMIN_PIN = os.getenv("ADMIN_PIN")
 
+# Load model
+def load_model():
+    return joblib.load("model.pkl")
+
+model = load_model()
+
 st.subheader("🔐 Admin Access")
 
 if not ADMIN_PIN:
@@ -78,11 +84,7 @@ st.set_page_config(page_title="Churn Prediction", layout="centered")
 
 st.title("📊 Customer Churn Prediction")
 
-# Load model
-def load_model():
-    return joblib.load("model.pkl")
 
-model = load_model()
 
 # Sidebar inputs
 st.sidebar.header("Enter Customer Details")
