@@ -28,7 +28,11 @@ if is_admin:
 
     st.subheader("📂 Upload New CSV Data")
 
-    uploaded_file = st.file_uploader("Upload CSV file", type=["csv"])
+    uploaded_file = st.file_uploader(
+        "Upload CSV file",
+        type=["csv"],
+        key="csv_uploader_admin"
+    )
 
     if uploaded_file is not None:
         try:
@@ -149,52 +153,6 @@ if st.button("Retrain Model"):
     st.success(f"✅ Model retrained! New Accuracy: {acc:.4f}")
     
     report_path = generate_drift_report()
-# =============================
-# 📂 UPLOAD CSV + AUTO RETRAIN
-# =============================
-st.subheader("📂 Upload New CSV Data")
-
-uploaded_file = st.file_uploader("Upload CSV file", type=["csv"])
-
-if uploaded_file is not None:
-    try:
-        new_data = pd.read_csv(uploaded_file)
-    except:
-        new_data = pd.read_csv(uploaded_file, sep=';')
-
-    file_path = "data/raw/data.csv"
-
-    # Append new dataset
-    if os.path.exists(file_path):
-        existing_df = pd.read_csv(file_path)
-
-        if list(new_data.columns) != list(existing_df.columns):
-            st.error("❌ Column mismatch! Upload correct format.")
-            st.write("Expected:", list(existing_df.columns))
-            st.write("Got:", list(new_data.columns))
-            st.stop()
-
-        combined_df = pd.concat([existing_df, new_data], ignore_index=True)
-        combined_df.to_csv(file_path, index=False)   # ✅ IMPORTANT
-
-    else:
-        combined_df = new_data
-
-    st.success("✅ CSV uploaded & data appended!")
-
-    # 🔁 AUTO RETRAIN
-    with st.spinner("Auto retraining model..."):
-        model, acc = train_model()
-
-    model = load_model()
-
-    st.success(f"✅ Model retrained automatically! Accuracy: {acc:.4f}")
-
-    # 📊 AUTO MONITORING
-    with st.spinner("Updating monitoring report..."):
-        generate_drift_report()
-
-    st.success("📊 Monitoring report updated!")
 
 # =============================
 # 📊 MONITORING SECTION
